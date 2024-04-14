@@ -21,16 +21,10 @@ const client = new Client({
 
 client.on("ready", (c) => {
     console.log(c.user.tag + " is ready");
+    // TODO: check current events when initializing
 });
 
-/*client.on("messageCreate", (msg) => {
-    if(msg.author.bot) return;
-    
-    console.log(msg);
-    msg.channel.send("hello world");
-});*/
-
-// /register
+// slash commands
 client.on("interactionCreate", (interaction) => {
     //console.log(interaction);
     if (!interaction.isChatInputCommand()) return;
@@ -41,26 +35,41 @@ client.on("interactionCreate", (interaction) => {
 client.on("guildScheduledEventCreate", (event) => {
     console.log("event created");
     console.log(event);
+
+    // create google calendar event
+    // data to get from event:
+        // event.id
+        // event.guildId
+        // event.name
+        // event.description
+        // event.scheduledStartTimestamp (unix timestamp)
+        // event.scheduledEndTimestamp (unix timestamp) (optional)
+        // event.entityType (int: 2 = voice, 3 = external. used to determine which of the next 2 values is the location)
+        // event.channelId
+        // event.entityMetadata.location
+        // event.status (int - only process events which are 1 = scheduled)
 });
 
 client.on("guildScheduledEventDelete", (event) => {
     console.log("event deleted");
-    //console.log(event);
+    console.log(event);
 });
 
 client.on("guildScheduledEventUpdate", (event) => {
     console.log("event updated");
-    //console.log(event);
+    console.log(event);
 });
 
 client.on("guildScheduledEventUserAdd", (event) => {
-    console.log("someone clicked interested?");
-    //console.log(event);
+    console.log("someone clicked interested");
+    console.log(event);
+    // it seems like these don't work
 });
 
 client.on("guildScheduledEventUserRemove", (event) => {
-    console.log("some unclicked interested?");
-    //console.log(event);
+    console.log("some unclicked interested");
+    console.log(event);
+    // it seems like these don't work
 });
 
 client.login(token);
@@ -104,7 +113,7 @@ function registryRemove(interaction) {
         gmailAddr: interaction.options.get("gmail-address").value
     }
 
-    // test if entry is in registry
+    // find entry in registry
     for (entry of registry) {
         if (entry.guildID === targetEntry.guildID && entry.userID === targetEntry.userID && entry.gmailAddr === targetEntry.gmailAddr) {
             // remove from registry
@@ -132,6 +141,3 @@ function registryWrite() {
         }
     );
 }
-
-// check current events when initializing
-// allow users to register - associate a gmail with the user and save to file on pi?

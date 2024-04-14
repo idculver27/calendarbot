@@ -1,7 +1,7 @@
 const { token } = require("../config.json");
 
-const guildid = "1224530443198791750";
-const clientid = "1228831445519306763";
+const guildID = "1224530443198791750"; // replace with your server's ID
+const clientID = "1228831445519306763";
 
 const { REST, Routes, ApplicationCommandOptionType } = require("discord.js");
 
@@ -39,7 +39,7 @@ const rest = new REST({ version: "10" }).setToken(token);
         console.log("Deploying slash commands...");
 
         await rest.put(
-            Routes.applicationGuildCommands(clientid, guildid),
+            Routes.applicationGuildCommands(clientID, guildID),
             { body: commands }
         )
 
