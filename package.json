@@ -1,0 +1,19 @@
+{
+  "name": "calendarbot",
+  "version": "1.0.0",
+  "description": "calendarbot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/idculver27/calendarbot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/idculver27/calendarbot/issues"
+  },
+  "homepage": "https://github.com/idculver27/calendarbot#readme"
+}
