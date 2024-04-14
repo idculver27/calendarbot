@@ -17,6 +17,18 @@ const commands = [
                 required: true
             }
         ]
+    },
+    {
+        name: "unregister",
+        description: "Unregister your Gmail address with Cal",
+        options: [
+            {
+                name: "gmail-address",
+                description: "Your Gmail address",
+                type: ApplicationCommandOptionType.String,
+                required: true
+            }
+        ]
     }
 ];
 

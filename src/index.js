@@ -33,11 +33,9 @@ client.on("ready", (c) => {
 // /register
 client.on("interactionCreate", (interaction) => {
     //console.log(interaction);
-    
     if (!interaction.isChatInputCommand()) return;
-    if (interaction.commandName !== "register") return;
-
-    addToRegistry(interaction);
+    if (interaction.commandName === "register") registryAdd(interaction);
+    else if (interaction.commandName === "unregister") registryRemove(interaction);
 });
 
 client.on("guildScheduledEventCreate", (event) => {
@@ -67,7 +65,7 @@ client.on("guildScheduledEventUserRemove", (event) => {
 
 client.login(token);
 
-function addToRegistry(interaction) {
+function registryAdd(interaction) {
     const gmailAddr = interaction.options.get("gmail-address").value;
     
     // basic validity check
@@ -94,7 +92,38 @@ function addToRegistry(interaction) {
 
     // add to registry
     registry.push(newEntry);
-    // write to file
+    registryWrite();
+    interaction.reply("Successfully registered your email!");
+}
+
+function registryRemove(interaction) {
+    // build registry entry to remove
+    let targetEntry = {
+        guildID: interaction.guildId,
+        userID: interaction.user.id,
+        gmailAddr: interaction.options.get("gmail-address").value
+    }
+
+    // test if entry is in registry
+    for (entry of registry) {
+        if (entry.guildID === targetEntry.guildID && entry.userID === targetEntry.userID && entry.gmailAddr === targetEntry.gmailAddr) {
+            // remove from registry
+            const indexToRemove = registry.indexOf(entry);
+            const firstHalf = registry.slice(0, indexToRemove);
+            const secondHalf = registry.slice(indexToRemove+1);
+            registry = firstHalf.concat(secondHalf);
+            registryWrite();
+            interaction.reply("Successfully unregistered your email!");
+            return;
+        }
+    }
+
+    // no match
+    interaction.reply("That email isn't registered");
+}
+
+// write to file
+function registryWrite() {
     fs.writeFile(
         "registry.json",
         JSON.stringify(registry),
@@ -102,7 +131,6 @@ function addToRegistry(interaction) {
             if (err) throw err;
         }
     );
-    interaction.reply("Successfully registered your email!");
 }
 
 // check current events when initializing
