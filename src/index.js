@@ -41,23 +41,28 @@ client.on("interactionCreate", (interaction) => {
 });
 
 client.on("guildScheduledEventCreate", (event) => {
+    console.log("event created");
     console.log(event);
 });
 
 client.on("guildScheduledEventDelete", (event) => {
-    console.log(event);
+    console.log("event deleted");
+    //console.log(event);
 });
 
 client.on("guildScheduledEventUpdate", (event) => {
-    console.log(event);
+    console.log("event updated");
+    //console.log(event);
 });
 
 client.on("guildScheduledEventUserAdd", (event) => {
-    console.log(event);
+    console.log("someone clicked interested?");
+    //console.log(event);
 });
 
 client.on("guildScheduledEventUserRemove", (event) => {
-    console.log(event);
+    console.log("some unclicked interested?");
+    //console.log(event);
 });
 
 client.login(token);
