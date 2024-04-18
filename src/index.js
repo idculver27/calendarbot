@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, Events, GatewayIntentBits } = require("discord.js");
 const { token } = require("../config.json");
 var registry;
 
@@ -9,6 +9,7 @@ fs.readFile("registry.json", function(err, data) {
     registry = JSON.parse(data);
 });
 
+// create client
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -19,15 +20,17 @@ const client = new Client({
     ]
 });
 
-client.on("ready", (c) => {
-    console.log(c.user.tag + " is ready");
+// ready
+client.once(Events.ClientReady, readyClient => {
+    console.log(`${readyClient.user.tag} is ready!`);
     // TODO: check current events when initializing
+    getEvents();
 });
 
 // slash commands
-client.on("interactionCreate", (interaction) => {
-    //console.log(interaction);
+client.on(Events.InteractionCreate, interaction => {
     if (!interaction.isChatInputCommand()) return;
+
     if (interaction.commandName === "register") registryAdd(interaction);
     else if (interaction.commandName === "unregister") registryRemove(interaction);
 });
@@ -72,8 +75,6 @@ client.on("guildScheduledEventUserRemove", (event) => {
     // it seems like these don't work
 });
 
-client.login(token);
-
 function registryAdd(interaction) {
     const gmailAddr = interaction.options.get("gmail-address").value;
     
@@ -86,14 +87,13 @@ function registryAdd(interaction) {
 
     // build registry entry
     let newEntry = {
-        guildID: interaction.guildId,
         userID: interaction.user.id,
         gmailAddr: gmailAddr
     }
 
     // test if entry is already in registry
     for (entry of registry) {
-        if (entry.guildID === newEntry.guildID && entry.userID === newEntry.userID && entry.gmailAddr === newEntry.gmailAddr) {
+        if (entry.userID === newEntry.userID && entry.gmailAddr === newEntry.gmailAddr) {
             interaction.reply("You've already registered that email!");
             return;
         }
@@ -108,18 +108,17 @@ function registryAdd(interaction) {
 function registryRemove(interaction) {
     // build registry entry to remove
     let targetEntry = {
-        guildID: interaction.guildId,
         userID: interaction.user.id,
         gmailAddr: interaction.options.get("gmail-address").value
     }
 
     // find entry in registry
     for (entry of registry) {
-        if (entry.guildID === targetEntry.guildID && entry.userID === targetEntry.userID && entry.gmailAddr === targetEntry.gmailAddr) {
+        if (entry.userID === targetEntry.userID && entry.gmailAddr === targetEntry.gmailAddr) {
             // remove from registry
             const indexToRemove = registry.indexOf(entry);
             const firstHalf = registry.slice(0, indexToRemove);
-            const secondHalf = registry.slice(indexToRemove+1);
+            const secondHalf = registry.slice(indexToRemove + 1);
             registry = firstHalf.concat(secondHalf);
             registryWrite();
             interaction.reply("Successfully unregistered your email!");
@@ -141,3 +140,13 @@ function registryWrite() {
         }
     );
 }
+
+// fetch all events
+async function getEvents() {
+    await fetch("http://discord.com/api/users/@me", { headers: { "Authorization": `Bot ${token}` }})
+        .then(response => response.json())
+        .then(response => console.log(response))
+        .catch(err => console.error(err));
+}
+
+client.login(token);
