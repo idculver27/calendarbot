@@ -23,7 +23,6 @@ const client = new Client({
 // ready
 client.once(Events.ClientReady, readyClient => {
     console.log(`${readyClient.user.tag} is ready!`);
-    // TODO: check current events when initializing
     getEvents();
 });
 
@@ -35,43 +34,27 @@ client.on(Events.InteractionCreate, interaction => {
     else if (interaction.commandName === "unregister") registryRemove(interaction);
 });
 
-client.on("guildScheduledEventCreate", (event) => {
-    console.log("event created");
-    console.log(event);
-
-    // create google calendar event
-    // data to get from event:
-        // event.id
-        // event.guildId
-        // event.name
-        // event.description
-        // event.scheduledStartTimestamp (unix timestamp)
-        // event.scheduledEndTimestamp (unix timestamp) (optional)
-        // event.entityType (int: 2 = voice, 3 = external. used to determine which of the next 2 values is the location)
-        // event.channelId
-        // event.entityMetadata.location
-        // event.status (int - only process events which are 1 = scheduled)
+client.on("guildScheduledEventCreate", () => {
+    getEvents();
 });
 
-client.on("guildScheduledEventDelete", (event) => {
-    console.log("event deleted");
-    console.log(event);
+client.on("guildScheduledEventDelete", () => {
+    getEvents();
 });
 
-client.on("guildScheduledEventUpdate", (event) => {
-    console.log("event updated");
-    console.log(event);
+client.on("guildScheduledEventUpdate", () => {
+    getEvents();
 });
 
-client.on("guildScheduledEventUserAdd", (event) => {
+client.on("guildScheduledEventUserAdd", () => {
     console.log("someone clicked interested");
-    console.log(event);
+    getEvents();
     // it seems like these don't work
 });
 
-client.on("guildScheduledEventUserRemove", (event) => {
+client.on("guildScheduledEventUserRemove", () => {
     console.log("some unclicked interested");
-    console.log(event);
+    getEvents();
     // it seems like these don't work
 });
 
@@ -143,10 +126,7 @@ function registryWrite() {
 
 // fetch all events
 async function getEvents() {
-    await fetch("http://discord.com/api/users/@me", { headers: { "Authorization": `Bot ${token}` }})
-        .then(response => response.json())
-        .then(response => console.log(response))
-        .catch(err => console.error(err));
+    // see apitest.js
 }
 
 client.login(token);
