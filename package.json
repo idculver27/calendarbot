@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/idculver27/calendarbot#readme",
   "dependencies": {
-    "discord.js": "^14.14.1"
+    "discord.js": "^14.14.1",
+    "googleapis": "^134.0.0"
   }
 }
